@@ -51,16 +51,40 @@ app.post('/', (req, res) => {
       .send('POST request received.');
 });
 
+app.get('/user', (req, res) => {
+    res
+      .json(users);
+});
+
 app.get('/user/:userId', (req, res) => {
     let response;
     const {userId} = req.params;
     response = users.filter(user => user.id === userId);
-    res.json(response)
+    res
+      .json(response)
 })
+
+app.delete('/user/:userId', (req, res) => {
+    const { userId } = req.params;
+  
+    const index = users.findIndex(u => u.id === userId);
+  
+    // make sure we actually find a user with that id
+    if (index === -1) {
+      return res
+        .status(404)
+        .send('User not found');
+    }
+  
+    users.splice(index, 1);
+  
+    res
+      .status(204)
+      .end();
+});
 
 app.post('/user', (req, res) => {
     // get the data
-    console.log(req.body)
     const { username, password, favoriteClub, newsLetter=false } = req.body;
     
     // All are required, check if they were sent
